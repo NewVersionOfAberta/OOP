@@ -7,9 +7,9 @@ import sample.types.Print;
 
 
 public class Material {
-    MaterialType type = MaterialType.Cotton;
-    Color color = Color.BLACK;
-    Print print = Print.No;
+    public MaterialType type = MaterialType.Cotton;
+    public Color color = Color.BLACK;
+    public Print print = Print.No;
 
 }
 

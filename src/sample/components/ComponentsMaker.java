@@ -18,11 +18,13 @@ public class ComponentsMaker {
         this.textFields = textFields;
     }
 
-    private ArrayList<TextField> textFields = new ArrayList<TextField>();
+    private ArrayList<TextField> textFields = new ArrayList<>();
 
-    public void makeComponents(ArrayList<Field> fields){
-        ArrayList<TextField> tempArr = new ArrayList<TextField>();
+
+    public void makeComponents(Class tempClass){
+        ArrayList<TextField> tempArr = new ArrayList<>();
         int xCoord = 10;
+        Field fields[] = tempClass.getFields();
         for(Field temp: fields){
             TextField t = new TextField();
             t.setLayoutX(xCoord);
@@ -30,5 +32,6 @@ public class ComponentsMaker {
             t.setLayoutY(Y);
             tempArr.add(new TextField());
         }
+        setTextFields(tempArr);
     }
 }

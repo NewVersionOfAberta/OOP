@@ -5,15 +5,12 @@ import sample.types.ShirtType;
 import sample.types.TopType;
 import sample.types.TrousersType;
 
-@Reflectable(name = "Костюм")
+@Reflectable(name = "Suit")
 public class Suit extends Clothes {
-    TopType toptype;
-    ShirtType shirtType;
-    TrousersType trousersType;
+    public TopType toptype;
+    public ShirtType shirtType;
+    public TrousersType trousersType;
 
-    @Override public String getName(){
-        return "Костюм";
-    }
 }
 
 

@@ -8,7 +8,7 @@ import sample.loader.ClassReader;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 
-public class CbCreator {
+public class ControlsCreator {
 
     public ObservableList<String> getItemsList() {
         return itemsList;
@@ -16,14 +16,14 @@ public class CbCreator {
 
     ObservableList<String> itemsList = FXCollections.observableArrayList();
 
-    public void makeCbItemsList(HashSet<Class> classes){
+    public void makeControlsList(HashSet<Class> classes){
 
-        ObservableList<String> classNames = FXCollections.observableArrayList();
+       // ObservableList<String> classNames = FXCollections.observableArrayList();
         for (Class tempClass : classes){
             Annotation annotation = tempClass.getAnnotation(Reflectable.class);
             if (annotation instanceof Reflectable) {
                 Reflectable reflectable = (Reflectable)annotation;
-                classNames.add(reflectable.name());
+                itemsList.add(reflectable.name());
             }
         }
     }

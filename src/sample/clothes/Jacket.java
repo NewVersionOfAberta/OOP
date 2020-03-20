@@ -3,12 +3,9 @@ package sample.clothes;
 import sample.Reflectable;
 import sample.types.JacketType;
 
-@Reflectable(name = "Куртка")
+@Reflectable(name = "Jacket")
 public class Jacket extends Outwear {
-    JacketType jacketType;
+    public JacketType jacketType;
 
-    @Override public String getName(){
-        return "Жакет";
-    }
 }
 

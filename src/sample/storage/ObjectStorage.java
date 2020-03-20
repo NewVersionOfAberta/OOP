@@ -1,5 +1,7 @@
 package sample.storage;
 
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import sample.clothes.Clothes;
 
@@ -8,15 +10,15 @@ import java.util.HashSet;
 
 public class ObjectStorage {
 
-    public Clothes getCurrentObject() {
+    public Class getCurrentObject() {
         return currentObject;
     }
 
-    public void setCurrentObject(Clothes currentObject) {
+    public void setCurrentObject(Class currentObject) {
         this.currentObject = currentObject;
     }
 
-    private Clothes currentObject;
+    private Class currentObject;
 
     public HashSet<Class> getClassList() {
         return classList;
@@ -28,14 +30,25 @@ public class ObjectStorage {
 
     private HashSet<Class> classList = new HashSet<>();
 
-    public ArrayList<TextField> getTextFields() {
-        return textFields;
+    public ArrayList<Clothes> getClothesArrayList() {
+        return clothesArrayList;
     }
 
-    public void setTextFields(ArrayList<TextField> textFields) {
-        this.textFields = textFields;
+    public void setClothesArrayList(ArrayList<Clothes> clothesArrayList) {
+        this.clothesArrayList = clothesArrayList;
     }
 
-    private ArrayList<TextField> textFields= new ArrayList<>();
+    private ArrayList<Clothes> clothesArrayList = new ArrayList<>();
+
+
+    public ArrayList<Control> getControls() {
+        return controls;
+    }
+
+    public void setControls(ArrayList<Control> controls) {
+        this.controls = controls;
+    }
+
+    private ArrayList<Control> controls = new ArrayList<>();
 
 }

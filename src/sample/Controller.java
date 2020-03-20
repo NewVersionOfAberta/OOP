@@ -1,16 +1,15 @@
 package sample;
 
 
-import com.sun.xml.internal.bind.v2.TODO;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import sample.components.ComponentsMaker;
 import sample.loader.ClassReader;
-import sample.model.CbCreator;
+import sample.model.ControlsCreator;
 import sample.model.ItemsSearcher;
 import sample.storage.ObjectStorage;
 
@@ -32,36 +31,67 @@ public class Controller {
     private AnchorPane apForm;
 
     @FXML
-    private ComboBox<String> cbClothes;
+    private ComboBox<String> cbxClothes;
 
     @FXML
     private Button btEnter;
 
     @FXML
+    private AnchorPane apFieldsView;
+
+    @FXML
+    private ListView lvObjects;
+
+    @FXML
+    private TextField tfName;
+
+    @FXML
     public void initialize(){
+
+
         ClassReader classReader = new ClassReader();
         classReader.loadClasses();
         objectStorage.setClassList(classReader.getClasses());
 
-        CbCreator cbCreator = new CbCreator();
+        ControlsCreator controlsCreator = new ControlsCreator();
+        cbxClothes.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                //ToDo: Refactor
+                ItemsSearcher itemsSearcher = new ItemsSearcher();
+                ComponentsMaker componentsMaker = new ComponentsMaker();
+                Class currClass = itemsSearcher.searchByAnnotation(cbxClothes.getValue(),objectStorage);
+                objectStorage.setCurrentObject(currClass);
+                ArrayList<Control> controls =
+                        componentsMaker.makeComponents(itemsSearcher.searchByAnnotation(cbxClothes.getValue(), objectStorage));
+                displayComponents(controls);
+                objectStorage.setControls(controls);
+               // objectStorage.setClothesArrayList(objectStorage.getClothesArrayList().add());
 
-        cbCreator.makeCbItemsList(objectStorage.getClassList());
-        cbClothes.setItems(cbCreator.getItemsList());
+            }
+        });
+        controlsCreator.makeControlsList(objectStorage.getClassList());
+        cbxClothes.setItems(controlsCreator.getItemsList());
 
     }
 
-    public void displayComponents(ArrayList<TextField> textFields){
-        apForm.getChildren().addAll(textFields);
+    public void displayComponents(ArrayList<Control> controls){
+        apFieldsView.getChildren().addAll(controls);
     }
 
     @FXML
-    public void onSelect(ActionEvent actionEvent){
-        //ToDo: Refactor this part
-        ItemsSearcher itemsSearcher = new ItemsSearcher();
-        ComponentsMaker componentsMaker = new ComponentsMaker();
-        componentsMaker.makeComponents(itemsSearcher.searchByAnnotation(cbClothes.getValue(), objectStorage));
-        displayComponents(componentsMaker.getTextFields());
-        objectStorage.setTextFields(componentsMaker.getTextFields());
+    void onMouseClick(ActionEvent event) {
+
+    }
+
+    @FXML
+    public void onSelect(){
+//        ToDo: Refactor this part
+//        ItemsSearcher itemsSearcher = new ItemsSearcher();
+//        ComponentsMaker componentsMaker = new ComponentsMaker();
+//        componentsMaker.makeComponents(itemsSearcher.searchByAnnotation(cbxClothes.getValue(), objectStorage));
+//        displayComponents(componentsMaker.getControls());
+//        objectStorage.setControls(componentsMaker.getControls());
     }
 
 }

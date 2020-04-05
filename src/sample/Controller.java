@@ -9,8 +9,9 @@ import javafx.scene.layout.AnchorPane;
 import sample.clothes.Clothes;
 import sample.components.ComponentsMaker;
 import sample.loader.ClassReader;
-import sample.model.ClothesMaker;
-import sample.model.ControlsCreator;
+import sample.material.Material;
+import sample.model.ItemMaker;
+import sample.model.cbContentMaker;
 import sample.model.ItemsSearcher;
 import sample.storage.ObjectStorage;
 
@@ -18,15 +19,15 @@ import java.util.ArrayList;
 
 
 public class Controller {
+
+    private static final String ERROR_TITLE = "Invalid values";
+    private static final String ERROR_INF_SYMBOLS = "Please, correct your input. Some fields contain invalid symbols. \n " +
+            "Make sure, that all text fields, except name field, have integer or float values";
+    private static final String ERROR_INF_EMPTY_FIELD = "Please, correct your input. Some fields are empty.";
+    private static final String ERROR_INF_INTERNAL = "Sorry, there are some internal exception.\n Please, keep calm and " +
+            "send message to developer";
+
     public Button btDelete;
-
-    public ObjectStorage getObjectStorage() {
-        return objectStorage;
-    }
-
-    public void setObjectStorage(ObjectStorage objectStorage) {
-        this.objectStorage = objectStorage;
-    }
 
     private ObjectStorage objectStorage = new ObjectStorage();
 
@@ -34,7 +35,16 @@ public class Controller {
     private AnchorPane apForm;
 
     @FXML
+    private Button btnMaterial;
+    @FXML
     private ComboBox<String> cbxClothes;
+
+
+    @FXML
+    private ListView<String> lvMaterialElements;
+
+    @FXML
+    private CheckBox cbExistMaterial;
 
     @FXML
     private Button btEnter;
@@ -54,41 +64,98 @@ public class Controller {
         classReader.loadClasses();
         objectStorage.setClassList(classReader.getClasses());
 
-        ControlsCreator controlsCreator = new ControlsCreator();
-        cbxClothes.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
-            //ToDo: Refactor
+        cbContentMaker cbContentMaker = new cbContentMaker();
+        cbxClothes.getSelectionModel().selectedIndexProperty().addListener(
+                (ChangeListener<? super Number>) (observable, oldValue, newValue) -> oncbClothesSelectItem());
 
-            ItemsSearcher itemsSearcher = new ItemsSearcher();
+        lvClothesElements.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) ->
+                onSelectLvClothesItem(newValue));
+
+        lvMaterialElements.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) ->
+                onSelectLvMaterialItem(newValue.intValue()));
+
+        cbExistMaterial.selectedProperty().addListener((observable, oldValue, newValue) ->
+                onCbExistMaterialSelect(newValue));
+        cbContentMaker.makeControlsList(objectStorage.getClassList());
+        cbxClothes.setItems(cbContentMaker.getItemsList());
+
+    }
+
+    private void onCbExistMaterialSelect(boolean value){
+        if (!objectStorage.isMaterial()){
             ComponentsMaker componentsMaker = new ComponentsMaker();
-            Class currClass = itemsSearcher.searchByAnnotation(cbxClothes.getValue(),objectStorage);
-            objectStorage.setCurrentObject(currClass);
-            ArrayList<Control> controls =
-                    componentsMaker.makeComponents(itemsSearcher.searchByAnnotation(cbxClothes.getValue(), objectStorage));
+            ArrayList<Control> controls = componentsMaker.makeComponents(objectStorage.getCurrentObject(), value,
+                    objectStorage.makeMaterialList());
             displayComponents(controls);
             objectStorage.setControls(controls);
-           // objectStorage.setClothesArrayList(objectStorage.getClothesArrayList().add());
+        }
+    }
 
-        });
+    private void onSelectLvClothesItem(Number newValue){
+        if (newValue.intValue() >= 0) {
+            cbExistMaterial.disableProperty().set(false);
+            objectStorage.setMaterial(false);
+            ComponentsMaker componentsMaker = new ComponentsMaker();
+            Clothes clothes = objectStorage.getClothesArrayList().get(newValue.intValue());
+            boolean isInList = objectStorage.isMaterialInList(clothes.material);
+            cbExistMaterial.setSelected(isInList);
+            objectStorage.setCurrentObject(clothes.getClass());
+            tfName.setText(lvClothesElements.getSelectionModel().getSelectedItem());
+            try {
+                ArrayList<Control> controls = componentsMaker.fillControls(componentsMaker.makeComponents(
+                        clothes.getClass(), isInList, objectStorage.makeMaterialList())
+                        , clothes, 0, objectStorage.isMaterialInList(clothes.material), clothes.material);
+                displayComponents(controls);
+                objectStorage.setControls(controls);
 
-        lvClothesElements.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.intValue() >= 0) {
-                ComponentsMaker componentsMaker = new ComponentsMaker();
-                Clothes clothes = objectStorage.getClothesArrayList().get(newValue.intValue());
-                objectStorage.setCurrentObject(clothes.getClass());
-                try {
-                    ArrayList<Control> controls = componentsMaker.fillControls(componentsMaker.makeComponents(clothes.getClass()), clothes, 0);
-                    displayComponents(controls);
-                    objectStorage.setControls(controls);
-                    tfName.setText(lvClothesElements.getSelectionModel().getSelectedItem());
 
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
-        });
+        }
+    }
 
-        controlsCreator.makeControlsList(objectStorage.getClassList());
-        cbxClothes.setItems(controlsCreator.getItemsList());
+    private void onSelectLvMaterialItem(int newValue){
+        if (newValue >= 0) {
+            objectStorage.setMaterial(true);
+            ComponentsMaker componentsMaker = new ComponentsMaker();
+            Material material = objectStorage.getMaterials().get(newValue);
+            tfName.setText(lvMaterialElements.getSelectionModel().getSelectedItem());
+            try {
+                ArrayList<Control> controls = componentsMaker.fillControls(componentsMaker.makeComponents(
+                        Material.class, false,null)
+                        , material, 0, false, null);
+                displayComponents(controls);
+                objectStorage.setControls(controls);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    void onMouseEntered(MouseEvent event) {
+        if (event.getSource() instanceof ListView){
+            ((ListView) event.getSource()).getSelectionModel().select(-1);
+        }
+    }
+
+
+
+    private void oncbClothesSelectItem(){
+        cbExistMaterial.disableProperty().set(false);
+        tfName.clear();
+        objectStorage.setMaterial(false);
+        ItemsSearcher itemsSearcher = new ItemsSearcher();
+        ComponentsMaker componentsMaker = new ComponentsMaker();
+        Class currClass = itemsSearcher.searchByAnnotation(cbxClothes.getValue(),objectStorage);
+        objectStorage.setCurrentObject(currClass);
+        Boolean isExistChosenMaterial = cbExistMaterial.isSelected();
+        ArrayList<Control> controls =
+                componentsMaker.makeComponents(currClass,
+                        isExistChosenMaterial, objectStorage.makeMaterialList());
+        displayComponents(controls);
+        objectStorage.setControls(controls);
 
     }
 
@@ -99,40 +166,117 @@ public class Controller {
         }
     }
 
+    private boolean isAllFieldsFilled(){
+        if (tfName.getText().isEmpty()){
+            return false;
+        }
+        for (Control control : objectStorage.getControls()){
+            if (control instanceof ComboBox){
+                if (((ComboBox) control).getSelectionModel().isEmpty()){
+                    return false;
+                }
+            }else {
+                if (control instanceof TextField){
+                    if (((TextField) control).getText().isEmpty()){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     @FXML
     void onMouseClick(MouseEvent event) {
-        ClothesMaker clothesMaker = new ClothesMaker();
-        String name = tfName.getText();
-        try {
-            Clothes clothes = objectStorage.findByName(name);
-            if (clothes != null) {
-                clothesMaker.parseResult(objectStorage.getControls(), objectStorage.getCurrentObject(), name, clothes);
-            }else{
-                clothes = clothesMaker.parseResult(objectStorage.getControls(), objectStorage.getCurrentObject(), name, null);
-                lvClothesElements.getItems().add(name);
-                objectStorage.getClothesArrayList().add(clothes);
-            }
+        if (isAllFieldsFilled()) {
+            ItemMaker itemMaker = new ItemMaker();
+            String name = tfName.getText();
+            if (objectStorage.isMaterial()) {
+                try {
+                    Material material = itemMaker.parseForMaterial(objectStorage.getControls(), name,
+                            objectStorage.findMaterialByName(tfName.getText()));
+                    if (material != null) {
+                        lvMaterialElements.getItems().add(name);
+                        objectStorage.getMaterials().add(material);
+                    }
+                } catch (IllegalAccessException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle(ERROR_TITLE);
+                    alert.setHeaderText(ERROR_INF_INTERNAL);
+                    alert.setContentText(ex.getMessage());
+                    alert.showAndWait();
+                }catch (NumberFormatException ex){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle(ERROR_TITLE);
+                    alert.setHeaderText(ERROR_INF_SYMBOLS);
+                    alert.setContentText(ex.getMessage());
+                    alert.showAndWait();
+                }
+            } else {
+                Clothes clothes = objectStorage.findByName(name);
+                try {
+                    clothes = itemMaker.parseResult(objectStorage.getControls(), objectStorage.getCurrentObject(), name, clothes,
+                            cbExistMaterial.isSelected(), objectStorage.getMaterials());
+                    if (clothes != null) {
+                        lvClothesElements.getItems().add(name);
+                        objectStorage.getClothesArrayList().add(clothes);
+                    }
+                } catch (IllegalAccessException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle(ERROR_TITLE);
+                    alert.setHeaderText(ERROR_INF_INTERNAL);
+                    alert.setContentText(ex.getMessage());
+                    alert.showAndWait();
+                } catch (NumberFormatException ex){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle(ERROR_TITLE);
+                    alert.setHeaderText(ERROR_INF_SYMBOLS);
+                    alert.setContentText(ex.getMessage());
+                    alert.showAndWait();
+                }
 
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            }
+        }else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(ERROR_TITLE);
+            alert.setHeaderText(ERROR_INF_EMPTY_FIELD);
+            alert.showAndWait();
         }
     }
 
-
     @FXML
-    public void onSelect(){
-//        ItemsSearcher itemsSearcher = new ItemsSearcher();
-//        ComponentsMaker componentsMaker = new ComponentsMaker();
-//        componentsMaker.makeComponents(itemsSearcher.searchByAnnotation(cbxClothes.getValue(), objectStorage));
-//        displayComponents(componentsMaker.getControls());
-//        objectStorage.setControls(componentsMaker.getControls());
+    void onMaterialButtonClick(MouseEvent event) {
+        cbExistMaterial.disableProperty().set(true);
+        tfName.clear();
+        objectStorage.setMaterial(true);
+        objectStorage.setCurrentObject(Material.class);
+        ComponentsMaker componentsMaker = new ComponentsMaker();
+        ArrayList<Control> controls =
+                componentsMaker.makeComponents(Material.class, false, null);
+        displayComponents(controls);
+        objectStorage.setControls(controls);
     }
 
+
     public void btnDeleteonMouseClick(MouseEvent event) {
-        ArrayList<Clothes> tempArr = objectStorage.getClothesArrayList();
-        tempArr.remove(lvClothesElements.getSelectionModel().getSelectedIndex());
-        objectStorage.setClothesArrayList(tempArr);
-        lvClothesElements.getItems().remove(lvClothesElements.getSelectionModel().getSelectedIndex());
+
+        tfName.clear();
+        cbExistMaterial.disableProperty().set(true);
+        if (objectStorage.isMaterial()) {
+
+            ArrayList<Material> materials = objectStorage.getMaterials();
+            materials.remove(lvMaterialElements.getSelectionModel().getSelectedIndex());
+            objectStorage.setMaterials(materials);
+            lvMaterialElements.getItems().remove(lvMaterialElements.getSelectionModel().getSelectedIndex());
+            lvMaterialElements.getSelectionModel().select(-1);
+        }else{
+
+            ArrayList<Clothes> tempArr = objectStorage.getClothesArrayList();
+            tempArr.remove(lvClothesElements.getSelectionModel().getSelectedIndex());
+            objectStorage.setClothesArrayList(tempArr);
+            lvClothesElements.getItems().remove(lvClothesElements.getSelectionModel().getSelectedIndex());
+            lvClothesElements.getSelectionModel().select(-1);
+        }
         displayComponents(null);
     }
 }

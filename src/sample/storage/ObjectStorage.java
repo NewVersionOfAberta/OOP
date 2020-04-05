@@ -14,6 +14,16 @@ public class ObjectStorage {
         return currentObject;
     }
 
+    public boolean isExist() {
+        return isExist;
+    }
+
+    public void setExist(boolean exist) {
+        isExist = exist;
+    }
+
+    private boolean isExist = false;
+
     public void setCurrentObject(Class currentObject) {
         this.currentObject = currentObject;
     }
@@ -50,5 +60,14 @@ public class ObjectStorage {
     }
 
     private ArrayList<Control> controls = new ArrayList<>();
+
+    public Clothes findByName(String name){
+        for (Clothes clothes : clothesArrayList){
+            if (clothes.getName().equals(name)){
+                return clothes;
+            }
+        }
+        return null;
+    }
 
 }

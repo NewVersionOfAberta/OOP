@@ -12,15 +12,17 @@
 
 <AnchorPane fx:id="apForm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
-      <ComboBox fx:id="cbxClothes" layoutX="8.0" layoutY="14.0" prefHeight="31.0" prefWidth="199.0" promptText="Choose ..." />
+      <ComboBox fx:id="cbxClothes" layoutX="8.0" layoutY="14.0" prefHeight="31.0" prefWidth="199.0" promptText="Choose ..." AnchorPane.topAnchor="14.0" />
       <AnchorPane layoutX="10.0" layoutY="55.0" prefHeight="531.0" prefWidth="199.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="55.0">
          <children>
-            <ListView id="lvObjects" fx:id="lvClothesElemens" layoutX="-1.0" prefHeight="531.0" prefWidth="199.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0" />
+            <ListView id="lvObjects" fx:id="lvClothesElements" layoutX="-1.0" prefHeight="493.0" prefWidth="199.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0" />
+            <Button fx:id="btDelete" onMouseClicked="#btnDeleteonMouseClick" layoutX="55.0" layoutY="502.0" mnemonicParsing="false" text="Delete" AnchorPane.bottomAnchor="-2.0" AnchorPane.leftAnchor="55.0" />
          </children>
       </AnchorPane>
       <AnchorPane id="apFieldsView" fx:id="apFieldsView" layoutX="209.0" layoutY="30.0" prefHeight="573.0" prefWidth="612.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="209.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
          <children>
-            <Button fx:id="btEnter" layoutX="531.0" layoutY="527.0" mnemonicParsing="false" onAction="#onSelect" onMouseClicked="#onMouseClick" text="Confirm" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+            <Button fx:id="btEnter" layoutX="531.0" layoutY="527.0" mnemonicParsing="false" onMouseClicked="#onMouseClick" text="Confirm" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+            <TextField fx:id="tfName" layoutX="20.0" prefHeight="31.0" prefWidth="226.0" promptText="Enter name..." AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
    </children>

@@ -4,9 +4,10 @@ import sample.types.Color;
 import sample.types.MaterialType;
 import sample.types.Print;
 
+import java.io.Serializable;
 
 
-public class Material {
+public class Material implements Serializable {
     public String getName() {
         return name;
     }

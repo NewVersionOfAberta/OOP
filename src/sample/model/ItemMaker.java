@@ -9,6 +9,7 @@ import sample.material.Material;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ItemMaker {
@@ -27,15 +28,15 @@ public class ItemMaker {
     private Boolean isExistMaterial = false;
 
 
-    public ArrayList<Material> getMaterials() {
+    public List<Material> getMaterials() {
         return materials;
     }
 
-    public void setMaterials(ArrayList<Material> materials) {
+    public void setMaterials(List<Material> materials) {
         this.materials = materials;
     }
 
-    private ArrayList<Material> materials;
+    private List<Material> materials;
 
     private void setIntValue(Field field, Control control, Object object) throws IllegalAccessException, NumberFormatException {
         if (control instanceof TextField){
@@ -96,7 +97,7 @@ public class ItemMaker {
     }
 
     public Clothes parseResult(ArrayList<Control> controls, Class parseClass, String name, Clothes existClothes,
-                               Boolean isExistMaterial, ArrayList<Material> materials)
+                               Boolean isExistMaterial, List<Material> materials)
             throws IllegalAccessException {
         setExistMaterial(isExistMaterial);
         setMaterials(materials);

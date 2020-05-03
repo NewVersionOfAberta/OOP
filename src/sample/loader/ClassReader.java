@@ -14,7 +14,7 @@ import java.util.Set;
 
 
 public class ClassReader {
-    public void setClasses(HashSet<Class> classes) {
+    private void setClasses(HashSet<Class> classes) {
         this.classes = classes;
     }
 
@@ -35,12 +35,11 @@ public class ClassReader {
         return allClasses;
     }
 
-    public void loadClasses(){
+    public void loadClasses(String packageName){
         try {
             HashSet<String> fullNames = new HashSet<>();
 
             ClassLoader classLoader = Main.class.getClassLoader();
-            String packageName = "sample/clothes";
             URL uPackage = classLoader.getResource(packageName);
             InputStream in = (InputStream) uPackage.getContent();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -48,7 +47,7 @@ public class ClassReader {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.endsWith(".class"))
-                    fullNames.add("sample.clothes." + line.substring(0, line.lastIndexOf('.')));
+                    fullNames.add(packageName.replaceAll("/", ".")+ "." + line.substring(0, line.lastIndexOf('.')));
             }
 
             for (String s : fullNames) {

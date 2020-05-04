@@ -39,7 +39,7 @@ public class ByteSerialize implements ISerialization {
     }
 
     @Override
-    public void Deserialize(String fileName) {
+    public void Deserialize(String fileName) throws IOException, ClassNotFoundException {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(fileName))) {
             int objectCounter = objectInputStream.read();
             for (int i = 0; i < objectCounter; i++) {
@@ -49,8 +49,6 @@ public class ByteSerialize implements ISerialization {
             for (int i = 0; i < objectCounter; i++) {
                 materials.add((Material) objectInputStream.readObject());
             }
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
         }
     }
 }

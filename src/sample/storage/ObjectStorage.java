@@ -10,6 +10,7 @@ import sample.material.Material;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class ObjectStorage {
 
@@ -53,15 +54,15 @@ public class ObjectStorage {
 
     private HashSet<Class> classList = new HashSet<>();
 
-    public ArrayList<Clothes> getClothesArrayList() {
+    public List<Clothes> getClothesArrayList() {
         return clothesArrayList;
     }
 
-    public void setClothesArrayList(ArrayList<Clothes> clothesArrayList) {
+    public void setClothesArrayList(List<Clothes> clothesArrayList) {
         this.clothesArrayList = clothesArrayList;
     }
 
-    private ArrayList<Clothes> clothesArrayList = new ArrayList<>();
+    private List<Clothes> clothesArrayList = new ArrayList<>();
 
 
     public ArrayList<Control> getControls() {
@@ -74,45 +75,45 @@ public class ObjectStorage {
 
     private ArrayList<Control> controls = new ArrayList<>();
 
-    public Clothes findByName(String name){
-        for (Clothes clothes : clothesArrayList){
-            if (clothes.getName().equals(name)){
+    public Clothes findByName(String name) {
+        for (Clothes clothes : clothesArrayList) {
+            if (clothes.getName().equals(name)) {
                 return clothes;
             }
         }
         return null;
     }
 
-    public ArrayList<Material> getMaterials() {
+    public List<Material> getMaterials() {
         return materials;
     }
 
-    public void setMaterials(ArrayList<Material> materials) {
+    public void setMaterials(List<Material> materials) {
         this.materials = materials;
     }
 
-    private ArrayList<Material> materials = new ArrayList<>();
+    private List<Material> materials = new ArrayList<>();
 
-    public ObservableList<String> makeMaterialList(){
+    public ObservableList<String> makeMaterialList() {
         ObservableList<String> materialList = FXCollections.observableArrayList();
-        for (Material material : getMaterials()){
+        for (Material material : getMaterials()) {
             materialList.add(material.getName());
         }
         return materialList;
     }
 
-    public Material findMaterialByName(String name){
-        for (Material material : getMaterials()){
-            if (material.getName().equals(name)){
+    public Material findMaterialByName(String name) {
+        for (Material material : getMaterials()) {
+            if (material.getName().equals(name)) {
                 return material;
             }
         }
         return null;
     }
 
-    public boolean isMaterialInList(Material material){
-        for (Material temp: materials){
-            if (material == temp){
+    public boolean isMaterialInList(Material material) {
+        for (Material temp : materials) {
+            if (material == temp) {
                 return true;
             }
         }

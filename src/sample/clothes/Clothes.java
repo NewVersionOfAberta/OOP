@@ -1,13 +1,18 @@
 package sample.clothes;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import sample.Reflectable;
 import sample.material.Material;
 import sample.types.ClothesSize;
 import sample.types.Sex;
 import sample.types.Style;
 
+import java.io.Serializable;
+
+
 @Reflectable(name = "Clothes")
-public class Clothes {
+public class Clothes implements Serializable {
     public String getName() {
         return name;
     }
@@ -24,4 +29,3 @@ public class Clothes {
     public Material material;
 
 }
-
